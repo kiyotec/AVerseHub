@@ -30,11 +30,15 @@ jobs:
         env:
           STEAM_WEB_API_KEY: ${{ secrets.STEAM_WEB_API_KEY }}
           APP_ID: ${{ inputs.app_id }}
+          TRIGGER: ${{ github.event_name }}
         run: |
           if [ -n "$APP_ID" ]; then
             node catalog/steam-sync.mjs "$APP_ID"
           elif [ -n "$STEAM_WEB_API_KEY" ]; then
             node catalog/steam-sync.mjs
+          elif [ "$TRIGGER" = workflow_dispatch ]; then
+            echo '::error::Set STEAM_WEB_API_KEY to sync the full Steam catalog.'
+            exit 1
           else
             echo '::notice::Set STEAM_WEB_API_KEY to enable full Steam Store sync. Individual AppIDs can be synced without a key.'
           fi
