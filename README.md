@@ -1,5 +1,7 @@
 # ManifestHub
 
+The [AVerseHub AppID index](catalog/README.md) tracks public AppID branch names and revisions from WhoziaoHub.
+
 Steam Depot Manifest Cache
 
 Update time: `2025-07-24`

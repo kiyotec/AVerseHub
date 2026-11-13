@@ -1,0 +1,29 @@
+name: Sync public AppID index
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 2 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: appid-index
+
+jobs:
+  sync:
+    if: github.repository == 'kiyotec/AVerseHub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          sparse-checkout: catalog
+      - run: node catalog/sync.mjs
+      - name: Commit index changes
+        run: |
+          git add catalog/appid-revisions.tsv
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit -m "Sync public AppID index"
+          git push origin HEAD:main
