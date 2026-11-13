@@ -12,7 +12,7 @@ The [Steam Store workflow](../.github/workflows/steam-catalog.yml) writes [steam
 
 ## Discord
 
-`/hub-sync [appid]` starts the Steam Store workflow from the configured Discord server. The command requires Administrator permission and replies privately with a GitHub Actions link.
+`/hubget appid:<id>` and `/hubupdate appid:<id>` start the Hubcap bundle workflow. `/hub-sync [appid]` starts the Steam Store workflow. Commands require Administrator permission on the configured Discord server and reply privately with a GitHub Actions link.
 
 1. Create and install a Discord application in your server. Copy its application ID, public key and server ID. [Discord setup](https://docs.discord.com/developers/quick-start/getting-started)
 2. Deploy `catalog/discord/wrangler.jsonc` to a Cloudflare Worker. Set `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` and `DISCORD_GUILD_ID`. Set `GITHUB_ACTIONS_TOKEN` as a Worker secret using a fine-grained token scoped to AVerseHub with Actions write permission.
@@ -21,3 +21,11 @@ The [Steam Store workflow](../.github/workflows/steam-catalog.yml) writes [steam
 ## Optional local bundle download
 
 For data you are authorized to retrieve, set your own `HUBCAP_API_KEY` locally and run `node catalog/fetch-bundle.mjs <AppID> <local-output-directory>`. Choose an output directory outside the Git checkout. It stores the ZIP for inspection. The command does not extract, upload or install the archive. The catalog workflow uses Steam, so it does not consume Hubcap quota. [HubcapDB](https://hubcapmanifest.com/) · [API use in LuaTools](https://github.com/madoiscool/LuaTools/blob/main/src/LuaToolsGui/Services/HubcapService.cs)
+
+## Automatic Lua and manifest sync
+
+1. Add `HUBCAP_API_KEY` as an [Actions repository secret](https://github.com/kiyotec/AVerseHub/settings/secrets/actions). Use a Hubcap account whose permissions cover the data you intend to publish in this public repository.
+2. Run [Sync Hubcap game bundles](https://github.com/kiyotec/AVerseHub/actions/workflows/hubcap-bundles.yml) with an AppID to fetch it now. Leave the field blank to look for recent Hubcap uploads.
+3. The job validates the ZIP, parses the AppID Lua as data, and checks the depot and manifest IDs. It publishes `<AppID>.lua`, `<AppID>.json`, `key.vdf` and the referenced `.manifest` files in the branch named by AppID. The same command creates a missing branch or makes a fast-forward update. An identical tree adds no commit.
+
+The job is scheduled at 03:17 UTC. Search uses the Hubcap keyword API documented by the historical uploader and is bounded by its search results. The default is five downloads per run, configurable with the repository variable `HUBCAP_SYNC_LIMIT`. The job stops on an authentication or quota error. `hubcap-revisions.json` records successful updates so the same search result is skipped on subsequent runs. Steam Web API credentials are used only by the separate Steam Store workflow.

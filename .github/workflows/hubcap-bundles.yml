@@ -1,0 +1,56 @@
+name: Sync Hubcap game bundles
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_id:
+        description: AppID to add or refresh, or blank to discover recent Hubcap bundles
+        type: string
+        required: false
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: appid-index
+
+jobs:
+  sync:
+    if: github.repository == 'kiyotec/AVerseHub' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          sparse-checkout: catalog
+      - run: node --test catalog/bundles.test.mjs catalog/discord/worker.test.mjs
+      - name: Sync Lua and manifests
+        id: bundles
+        env:
+          HUBCAP_API_KEY: ${{ secrets.HUBCAP_API_KEY }}
+          HUBCAP_SYNC_LIMIT: ${{ vars.HUBCAP_SYNC_LIMIT }}
+          APP_ID: ${{ inputs.app_id }}
+          TRIGGER: ${{ github.event_name }}
+        run: |
+          if [ -n "$HUBCAP_API_KEY" ]; then
+            if [ -n "$APP_ID" ]; then
+              node catalog/sync-bundles.mjs "$APP_ID"
+            else
+              node catalog/sync-bundles.mjs
+            fi
+          elif [ "$TRIGGER" = workflow_dispatch ]; then
+            echo '::error::Set HUBCAP_API_KEY in AVerseHub Actions secrets.'
+            exit 1
+          else
+            echo '::notice::Set HUBCAP_API_KEY to enable scheduled bundle sync.'
+          fi
+      - name: Save synced revisions
+        if: ${{ !cancelled() && (steps.bundles.outcome == 'success' || steps.bundles.outcome == 'failure') }}
+        run: |
+          if [ ! -f catalog/hubcap-revisions.json ]; then exit 0; fi
+          git add catalog/hubcap-revisions.json
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit -m "Record Hubcap bundle revisions"
+          git push origin HEAD:main

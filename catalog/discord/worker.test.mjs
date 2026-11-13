@@ -46,3 +46,25 @@ test("dispatches only for administrators on the configured server", async () => 
   assert.match(calls[0][0], /kiyotec\/AVerseHub\/actions\/workflows\/steam-catalog\.yml\/dispatches$/);
   assert.match(calls[1][1].content, /runs\/5/);
 });
+
+test("routes both bundle commands to the Hubcap workflow and requires an AppID", async () => {
+  const command = { type: 2, guild_id: env.DISCORD_GUILD_ID, member: { permissions: "8" }, token: "fixture" };
+  let background;
+  const context = { waitUntil: task => { background = task; } };
+  for (const name of ["hubget", "hubupdate"]) {
+    const ack = await handleInteraction(await signed({
+      ...command, data: { name, options: [{ name: "appid", value: 3527290 }] },
+    }), env, context, async (url, options) => {
+      if (options.method === "POST") {
+        assert.match(url, /hubcap-bundles\.yml\/dispatches$/);
+        assert.equal(JSON.parse(options.body).inputs.app_id, "3527290");
+        return Response.json({ workflow_run_id: 5 });
+      }
+      return Response.json({});
+    });
+    assert.equal((await ack.json()).type, 5);
+    await background;
+  }
+  const invalid = await handleInteraction(await signed({ ...command, data: { name: "hubget" } }), env, {});
+  assert.match((await invalid.json()).data.content, /AppID/);
+});

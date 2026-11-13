@@ -1,6 +1,6 @@
 # ManifestHub
 
-The [AVerseHub catalog](catalog/README.md) includes an independent Steam Store sync, a Discord command and the WhoziaoHub branch index.
+The [AVerseHub catalog](catalog/README.md) includes scheduled Hubcap Lua and manifest sync, Discord commands, Steam Store metadata, and the WhoziaoHub branch index.
 
 Steam Depot Manifest Cache
 
