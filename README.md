@@ -1,6 +1,6 @@
 # ManifestHub
 
-The [AVerseHub AppID index](catalog/README.md) tracks public AppID branch names and revisions from WhoziaoHub.
+The [AVerseHub catalog](catalog/README.md) includes an independent Steam Store sync, a Discord command and the WhoziaoHub branch index.
 
 Steam Depot Manifest Cache
 
