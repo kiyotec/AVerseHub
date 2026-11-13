@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: steam-store-catalog
+  group: appid-index
 
 jobs:
   sync:
@@ -24,7 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: 0
           sparse-checkout: catalog
       - run: node --test catalog/steam-sync.test.mjs
       - name: Sync catalog
@@ -45,5 +44,4 @@ jobs:
           git add catalog/steam-apps.json
           if git diff --cached --quiet; then exit 0; fi
           git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit -m "Update Steam Store catalog"
-          git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com pull --rebase origin main
           git push origin HEAD:main
