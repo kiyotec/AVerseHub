@@ -1,23 +1,16 @@
-# ManifestHub
+# AVerseHub
 
-The [AVerseHub catalog](catalog/README.md) includes scheduled Hubcap Lua and manifest sync, Discord commands, Steam Store metadata, and the WhoziaoHub branch index.
+## Game mới cập nhật
 
-Steam Depot Manifest Cache
+<!-- hubcap-updates:start -->
 
-Update time: `2025-07-24`
+| Giờ Việt Nam | AppID | Tên game | Thao tác | File thay đổi |
+| --- | --- | --- | --- | --- |
+| 2026-11-14 17:27 | [4045760](https://github.com/kiyotec/AVerseHub/tree/4045760) | Project: Home! | Thêm mới | [5 thêm, 0 sửa, 0 xóa](https://github.com/kiyotec/AVerseHub/commit/3369bcd1c2cb19562d629575d0ec18cf18624a33) |
+| 2026-11-14 17:27 | [5094790](https://github.com/kiyotec/AVerseHub/tree/5094790) | QUTAS67 - Qubic Ultimate Tap Adventure Simulator 2067 | Thêm mới | [5 thêm, 0 sửa, 0 xóa](https://github.com/kiyotec/AVerseHub/commit/f0f3c0d02612322024f7249e8ae986ccc9da752d) |
+| 2026-11-14 17:27 | [2884880](https://github.com/kiyotec/AVerseHub/tree/2884880) | — | Thêm mới | [4 thêm, 0 sửa, 0 xóa](https://github.com/kiyotec/AVerseHub/commit/ab2f81d0b86349eeac47f694b01df426a0e1548d) |
+| 2026-11-14 17:27 | [4294670](https://github.com/kiyotec/AVerseHub/tree/4294670) | Aurora Protocol | Thêm mới | [4 thêm, 0 sửa, 0 xóa](https://github.com/kiyotec/AVerseHub/commit/4c81e0bc63c26d35aa9d29981bed01194410c388) |
+| 2026-11-14 17:27 | [2852300](https://github.com/kiyotec/AVerseHub/tree/2852300) | — | Thêm mới | [4 thêm, 0 sửa, 0 xóa](https://github.com/kiyotec/AVerseHub/commit/ea2fe6be87d0dd3b66d10fd47c8742871f90ac79) |
+| 2026-11-14 17:24 | [3527290](https://github.com/kiyotec/AVerseHub/tree/3527290) | PEAK | Cập nhật | [1 thêm, 3 sửa, 1 xóa](https://github.com/kiyotec/AVerseHub/commit/7de9b2e075b9526eb16b8252d82f75b8b43771f6) |
 
->[!NOTE]
->This repository is a complete fork of the original ManifestHub database, which got deleted on GitHub
-
-## 致倒卖者/Note for resellers
-
-* 如果再发现有倒卖本清单库的行为，本清单库中的清单将不会再更新。
-* If found out that there are still people reselling this manifesthub, we will stop updating the manifests in manifesthub.
-
-## Steam 清单 API / Steam Manifest API
-
-* 支持最新清单及创意工坊清单 / Supports latest manifests and workshop manifests
-* API 调用方法: `https://api.manifesthub1.filegear-sg.me/manifest?apikey=<API密钥>&depotid=<depotid>&manifestid=<清单id>`
-* API Call Method: `https://api.manifesthub1.filegear-sg.me/manifest?apikey=<API Key>&depotid=<depotid>&manifestid=<manifest id>`
-* 获取API密钥/Get API Key: [https://manifesthub1.filegear-sg.me](https://manifesthub1.filegear-sg.me)
-* 免费API密钥有效期为24小时/Free API Key valid for 24 hours
+<!-- hubcap-updates:end -->

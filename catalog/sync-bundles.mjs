@@ -5,6 +5,8 @@ import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { fetchBundle, validAppId } from "./fetch-bundle.mjs";
+import { describeChange, refreshReadme } from "./bundle-report.mjs";
+import { fetchSteamApp } from "./steam-sync.mjs";
 
 const keywords = [
   "the", "game", "and", "edition", "demo", "playtest", "remastered", "complete",
@@ -125,7 +127,11 @@ async function main() {
       execFileSync(process.env.PYTHON || "python", [fileURLToPath(new URL("./validate-bundle.py", import.meta.url)), archive, appId, files],
         { env: commandEnv, stdio: "inherit", timeout: 60_000 });
       const commit = publish(appId, refs.get(appId), files, join(temp, "index"));
-      state[appId] = { uploaded, commit };
+      const change = describeChange(appId, refs.get(appId), commit, git);
+      if (change) {
+        change.title = state[appId]?.change?.title ?? (await fetchSteamApp(Number(appId)).catch(() => null))?.name;
+      }
+      state[appId] = { ...state[appId], uploaded, commit, ...(change && { change }) };
       const ordered = Object.fromEntries(Object.entries(state).sort(([a], [b]) => Number(a) - Number(b)));
       writeFileSync(stateFile, JSON.stringify(ordered, null, 2) + "\n", "utf8");
       console.log(`AppID ${appId}: ${commit}`);
@@ -137,6 +143,7 @@ async function main() {
       rmSync(temp, { recursive: true, force: true });
     }
   }
+  refreshReadme(state);
   if (failed) process.exitCode = 1;
 }
 

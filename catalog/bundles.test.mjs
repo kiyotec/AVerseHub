@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { fetchBundle } from "./fetch-bundle.mjs";
+import { describeChange, updatesTable } from "./bundle-report.mjs";
 import { discover, publish, selectCandidates } from "./sync-bundles.mjs";
 
 const python = process.env.PYTHON || "python";
@@ -68,6 +69,12 @@ test("downloads, validates and updates a numeric branch with fast-forward histor
       execFileSync(python, [validator, zip, "42", staged]);
       assert.equal(JSON.parse(readFileSync(join(staged, "42.json"))).depot["43"].manifests.public.gid, String(gid));
       const commit = publish("42", head, staged, join(temp, `index-${gid}`));
+      const change = describeChange("42", head, commit, args => git(...args));
+      assert.deepEqual(change.fileCounts, head ? { A: 1, M: 2, D: 1 } : { A: 4, M: 0, D: 0 });
+      assert.equal(describeChange("42", commit, commit, args => git(...args)), null);
+      const table = updatesTable({ 42: { change: { ...change, title: "a|b <tag>" } } });
+      assert.match(table, /a&#124;b &#60;tag&#62;/);
+      assert.match(table, new RegExp(`/commit/${commit}`));
       assert.equal(git("ls-remote", "--heads", "origin", "42"), `${commit}\trefs/heads/42`);
       if (head) assert.equal(git("rev-parse", `${commit}^`), head);
       assert.deepEqual(git("ls-tree", "--name-only", commit).split("\n"), ["42.json", "42.lua", `43_${gid}.manifest`, "key.vdf"]);
