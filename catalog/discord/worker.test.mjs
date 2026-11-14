@@ -68,3 +68,31 @@ test("routes both bundle commands to the Hubcap workflow and requires an AppID",
   const invalid = await handleInteraction(await signed({ ...command, data: { name: "hubget" } }), env, {});
   assert.match((await invalid.json()).data.content, /AppID/);
 });
+
+test("runs discovery and reads workflow or AppID status", async () => {
+  const command = { type: 2, guild_id: env.DISCORD_GUILD_ID, member: { permissions: "8" }, token: "fixture" };
+  let background;
+  const context = { waitUntil: task => { background = task; } };
+  for (const [name, value, expectedPath, upstream, expectedReply] of [
+    ["hubscan", undefined, /hubcap-bundles\.yml\/dispatches$/, { workflow_run_id: 5 }, /runs\/5/],
+    ["hubstatus", undefined, /hubcap-bundles\.yml\/runs\?branch=main&per_page=1$/, { workflow_runs: [{ id: 7, run_number: 3, conclusion: "success" }] }, /thành công.*runs\/7/],
+    ["hubstatus", 3527290, /contents\?ref=3527290$/, [{ type: "file", name: "3527290.lua" }, { type: "file", name: "3527291_123.manifest" }], /có Lua.*1 manifest/],
+    ["hubstatus", 1, /contents\?ref=1$/, null, /Chưa có nhánh AppID 1/],
+  ]) {
+    const data = { name, options: value ? [{ name: "appid", value }] : [] };
+    let reply;
+    const response = await handleInteraction(await signed({ ...command, data }), env, context, async (url, options) => {
+      if (options.method === "PATCH") {
+        reply = JSON.parse(options.body).content;
+        return Response.json({});
+      }
+      assert.match(url, expectedPath);
+      if (name === "hubscan") assert.deepEqual(JSON.parse(options.body), { ref: "main", inputs: { app_id: "" } });
+      else assert.equal(options.method, "GET");
+      return upstream ? Response.json(upstream) : new Response(null, { status: 404 });
+    });
+    assert.equal((await response.json()).type, 5);
+    await background;
+    assert.match(reply, expectedReply);
+  }
+});

@@ -8,13 +8,15 @@ if (!/^\d{17,20}$/.test(app ?? "") || !/^\d{17,20}$/.test(guild ?? "") || !token
       ["hub-sync", "Đồng bộ metadata Steam vào AVerseHub", false],
       ["hubget", "Lấy Lua và manifest cho một AppID", true],
       ["hubupdate", "Làm mới Lua và manifest của một AppID", true],
+      ["hubscan", "Chạy lượt tự dò Lua và manifest ngay", null],
+      ["hubstatus", "Xem lượt đồng bộ mới nhất hoặc kiểm tra một AppID", false],
     ]) {
       const response = await fetch(`https://discord.com/api/v10/applications/${app}/guilds/${guild}/commands`, {
         method: "POST",
         headers: { authorization: `Bot ${token}`, "content-type": "application/json" },
         body: JSON.stringify({
           type: 1, name, description, default_member_permissions: "8",
-          options: [{ type: 4, name: "appid", description: "Steam AppID", required, min_value: 1, max_value: 0xffffffff }],
+          options: required === null ? [] : [{ type: 4, name: "appid", description: "Steam AppID", required, min_value: 1, max_value: 0xffffffff }],
         }),
         redirect: "error",
         signal: AbortSignal.timeout(15_000),

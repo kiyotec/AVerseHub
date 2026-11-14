@@ -1,4 +1,6 @@
 const repository = "kiyotec/AVerseHub";
+const bundleWorkflow = "hubcap-bundles.yml";
+const workflows = { "hub-sync": "steam-catalog.yml", hubget: bundleWorkflow, hubupdate: bundleWorkflow, hubscan: bundleWorkflow };
 const encoder = new TextEncoder();
 const noMentions = { parse: [] };
 const hexBytes = hex => Uint8Array.from(hex.match(/../g), pair => Number.parseInt(pair, 16));
@@ -42,37 +44,69 @@ async function readBody(request) {
   }
 }
 
-async function dispatch(interaction, env, appId, workflow, request) {
+function github(path, env, request, body) {
+  return request(`https://api.github.com/repos/${repository}/${path}`, {
+    method: body ? "POST" : "GET",
+    headers: {
+      ...(env.GITHUB_ACTIONS_TOKEN ? { authorization: `Bearer ${env.GITHUB_ACTIONS_TOKEN}` } : {}),
+      accept: "application/vnd.github+json",
+      "content-type": "application/json",
+      "user-agent": "AVerseHub-Discord",
+      "x-github-api-version": "2026-03-10",
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    redirect: "error",
+    signal: AbortSignal.timeout(10_000),
+  });
+}
+
+async function dispatch(env, appId, workflow, request) {
   let message = "GitHub chưa nhận được yêu cầu đồng bộ.";
   try {
-    const response = await request(`https://api.github.com/repos/${repository}/actions/workflows/${workflow}/dispatches`, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${env.GITHUB_ACTIONS_TOKEN}`,
-        accept: "application/vnd.github+json",
-        "content-type": "application/json",
-        "user-agent": "AVerseHub-Discord",
-        "x-github-api-version": "2026-03-10",
-      },
-      body: JSON.stringify({ ref: "main", inputs: { app_id: appId } }),
-      redirect: "error",
-      signal: AbortSignal.timeout(10_000),
-    });
+    const response = await github(`actions/workflows/${workflow}/dispatches`, env, request, { ref: "main", inputs: { app_id: appId } });
     if (response.ok) {
       const result = response.status === 200 ? await response.json() : {};
       const url = Number.isSafeInteger(result.workflow_run_id)
         ? `https://github.com/${repository}/actions/runs/${result.workflow_run_id}`
         : `https://github.com/${repository}/actions/workflows/${workflow}`;
-      const subject = workflow === "hubcap-bundles.yml" ? "gói Lua và manifest" : "danh mục Steam";
+      const subject = workflow === bundleWorkflow ? "gói Lua và manifest" : "danh mục Steam";
       message = `Đã yêu cầu đồng bộ ${subject}${appId ? ` cho AppID ${appId}` : ""}. [Xem lượt chạy](${url}).`;
     }
   } catch {
     // Report a generic failure without logging tokens or upstream response bodies.
   }
+  return message;
+}
+
+async function status(env, appId, request) {
+  try {
+    if (appId) {
+      const response = await github(`contents?ref=${appId}`, env, request);
+      if (response.status === 404) return `Chưa có nhánh AppID ${appId} trên AVerseHub.`;
+      if (!response.ok) throw new Error();
+      const entries = await response.json();
+      const files = entries.filter(entry => entry.type === "file").map(entry => entry.name);
+      const manifestCount = files.filter(name => /^\d+_\d+\.manifest$/i.test(name)).length;
+      const lua = files.includes(`${appId}.lua`) ? "có Lua" : "thiếu Lua";
+      return `AppID ${appId} · ${lua} · ${manifestCount} manifest. [Xem nhánh](https://github.com/${repository}/tree/${appId}).`;
+    }
+    const response = await github(`actions/workflows/${bundleWorkflow}/runs?branch=main&per_page=1`, env, request);
+    if (!response.ok) throw new Error();
+    const { workflow_runs: [run] } = await response.json();
+    if (!run) return "Chưa tìm thấy lượt đồng bộ trên GitHub Actions.";
+    const labels = { success: "thành công", failure: "lỗi", in_progress: "đang chạy", queued: "đang chờ", cancelled: "đã hủy" };
+    const label = labels[run.conclusion ?? run.status] ?? "xem trên GitHub";
+    return `Lượt đồng bộ gần nhất #${run.run_number} · ${label}. [Xem lượt chạy](https://github.com/${repository}/actions/runs/${run.id}).`;
+  } catch {
+    return "Chưa đọc được trạng thái từ GitHub.";
+  }
+}
+
+async function finish(interaction, message, request) {
   await request(`https://discord.com/api/v10/webhooks/${interaction.application_id}/${interaction.token}/messages/@original`, {
     method: "PATCH",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ content: message, allowed_mentions: noMentions }),
+    body: JSON.stringify({ content: await message, allowed_mentions: noMentions }),
     redirect: "error",
     signal: AbortSignal.timeout(10_000),
   });
@@ -91,18 +125,18 @@ export async function handleInteraction(request, env, context, outbound = fetch)
   if (!data || data.application_id !== env.DISCORD_APPLICATION_ID) return new Response(null, { status: 401 });
   if (data.type === 1) return Response.json({ type: 1 });
   const command = data.data?.name;
-  if (data.type !== 2 || !["hub-sync", "hubget", "hubupdate"].includes(command)) return privateReply("Lệnh không được hỗ trợ.");
+  if (data.type !== 2 || (command !== "hubstatus" && !Object.hasOwn(workflows, command))) return privateReply("Lệnh không được hỗ trợ.");
   const permissions = data.member?.permissions ?? "";
   if (!env.DISCORD_GUILD_ID || data.guild_id !== env.DISCORD_GUILD_ID || !/^[0-9]{1,24}$/.test(permissions)
       || (BigInt(permissions) & 8n) === 0n) return privateReply("Lệnh này dành cho quản trị viên của máy chủ AVerseHub.");
-  const appId = data.data.options?.find(option => option.name === "appid")?.value ?? "";
-  const workflow = command === "hub-sync" ? "steam-catalog.yml" : "hubcap-bundles.yml";
-  if ((appId !== "" || workflow === "hubcap-bundles.yml") && (!/^[1-9][0-9]{0,9}$/.test(appId) || Number(appId) > 0xffffffff))
+  const appId = String(data.data.options?.find(option => option.name === "appid")?.value ?? "");
+  if ((appId !== "" || ["hubget", "hubupdate"].includes(command)) && (!/^[1-9][0-9]{0,9}$/.test(appId) || Number(appId) > 0xffffffff))
     return privateReply("Nhập AppID Steam hợp lệ.");
-  if (!env.GITHUB_ACTIONS_TOKEN || typeof data.token !== "string" || !/^[\w.-]{1,512}$/.test(data.token))
+  if ((command !== "hubstatus" && !env.GITHUB_ACTIONS_TOKEN) || typeof data.token !== "string" || !/^[\w.-]{1,512}$/.test(data.token))
     return privateReply("Bot chưa được cấu hình đầy đủ.");
 
-  context.waitUntil(dispatch(data, env, String(appId), workflow, outbound).catch(() => {}));
+  const reply = command === "hubstatus" ? status(env, appId, outbound) : dispatch(env, appId, workflows[command], outbound);
+  context.waitUntil(finish(data, reply, outbound).catch(() => {}));
   return Response.json({ type: 5, data: { flags: 64 } });
 }
 

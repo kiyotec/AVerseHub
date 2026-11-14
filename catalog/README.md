@@ -12,7 +12,16 @@ The [Steam Store workflow](../.github/workflows/steam-catalog.yml) writes [steam
 
 ## Discord
 
-`/hubget appid:<id>` and `/hubupdate appid:<id>` start the Hubcap bundle workflow. `/hub-sync [appid]` starts the Steam Store workflow. Commands require Administrator permission on the configured Discord server and reply privately with a GitHub Actions link.
+Commands require Administrator permission on the configured Discord server and reply privately.
+
+| Command | Action |
+| --- | --- |
+| `/hubget appid:3527290` | Add the game's Lua and manifests to AVerseHub. |
+| `/hubupdate appid:3527290` | Fetch the current bundle again for that AppID. Both commands create or refresh the branch. |
+| `/hubscan` | Start the same discovery job as the daily schedule. |
+| `/hubstatus` | Show the latest bundle job and its GitHub Actions link. |
+| `/hubstatus appid:3527290` | Show whether the branch exists and list its Lua presence and manifest count. |
+| `/hub-sync appid:3527290` | Refresh Steam Store metadata for a specific AppID. Omit the AppID to sync the Store catalog with `STEAM_WEB_API_KEY`. |
 
 1. Create and install a Discord application in your server. Copy its application ID, public key and server ID. [Discord setup](https://docs.discord.com/developers/quick-start/getting-started)
 2. Deploy `catalog/discord/wrangler.jsonc` to a Cloudflare Worker. Set `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` and `DISCORD_GUILD_ID`. Set `GITHUB_ACTIONS_TOKEN` as a Worker secret using a fine-grained token scoped to AVerseHub with Actions write permission.
