@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { fetchBundle, validAppId } from "./fetch-bundle.mjs";
 
@@ -31,19 +32,37 @@ export function selectCandidates(rows, refs, state, now = Date.now()) {
   }).sort((a, b) => b[1] - a[1]);
 }
 
-export async function discover(apiKey, request = fetch) {
+export async function discover(apiKey, request = fetch, now = Date.now(), pause = delay) {
+  const perRun = 4;
+  const start = Math.floor(now / 86_400_000) * perRun % keywords.length;
   const rows = [];
-  for (const keyword of keywords) {
+  for (const keyword of keywords.slice(start, start + perRun)) {
     const url = new URL("https://hubcapmanifest.com/api/v1/search");
     url.search = new URLSearchParams({ q: keyword, limit: "100" });
-    const response = await request(url, {
+    const options = {
       headers: { authorization: `Bearer ${apiKey}`, accept: "application/json" },
-      redirect: "error", signal: AbortSignal.timeout(20_000),
-    });
-    if (!response.ok) throw new Error(`Hubcap search returned HTTP ${response.status}`);
+      redirect: "error",
+    };
+    if (keyword !== keywords[start]) await pause(2_000);
+    let response = await request(url, { ...options, signal: AbortSignal.timeout(20_000) });
+    const retryAfter = response.headers.get("retry-after");
+    if (response.status === 429 && /^[0-9]{1,2}$/.test(retryAfter ?? "") && Number(retryAfter) <= 30) {
+      await response.body?.cancel();
+      await pause(Math.max(2, Number(retryAfter)) * 1_000);
+      response = await request(url, { ...options, signal: AbortSignal.timeout(20_000) });
+    }
+    if (!response.ok) {
+      await response.body?.cancel();
+      const hint = [401, 403].includes(response.status) ? ". Check whether HUBCAP_API_KEY has expired" : "";
+      const message = `Hubcap search for ${keyword} returned HTTP ${response.status}${hint}`;
+      if (response.status !== 429 || keyword === keywords[start]) throw new Error(message);
+      console.warn(`${message}; processing search results already received.`);
+      break;
+    }
     const result = await response.json();
     if (!Array.isArray(result.results)) throw new Error("Hubcap search response has an unexpected format");
     rows.push(...result.results);
+    console.log(`Hubcap search for ${keyword}: ${result.results.length} result(s)`);
   }
   return rows;
 }

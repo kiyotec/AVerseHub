@@ -28,12 +28,19 @@ test("searches Hubcap and chooses new and changed bundles once per AppID", async
   const now = Date.parse("2026-11-14T00:00:00Z");
   const rows = [1, 2, 3, 2].map((id, i) => ({ game_id: id, uploaded_date: `2026-11-${10 + i}`, manifest_available: true }));
   const state = { 1: { uploaded: Date.parse("2026-11-10"), commit: "same" }, 2: { uploaded: Date.parse("2026-11-01"), commit: "older" } };
+  const queried = [];
+  const pauses = [];
   const results = await discover("test-key", async (url, options) => {
     assert.equal(`${url.origin}${url.pathname}`, "https://hubcapmanifest.com/api/v1/search");
     assert.equal(url.searchParams.get("limit"), "100");
     assert.equal(options.headers.authorization, "Bearer test-key");
-    return Response.json({ results: url.searchParams.get("q") === "game" ? rows : [] });
-  });
+    const keyword = url.searchParams.get("q");
+    queried.push(keyword);
+    if (queried.length === 2) return new Response(null, { status: 429, headers: { "retry-after": "3" } });
+    return Response.json({ results: keyword === "game" ? rows : [] });
+  }, 0, async ms => { pauses.push(ms); });
+  assert.deepEqual(queried, ["the", "game", "game", "and", "edition"]);
+  assert.deepEqual(pauses, [2_000, 3_000, 2_000, 2_000]);
   assert.deepEqual(selectCandidates(results, new Map([["1", "same"], ["2", "older"]]), state, now).map(([id]) => id), ["2", "3"]);
 });
 
