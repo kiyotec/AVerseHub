@@ -14,6 +14,21 @@
       "title": "The Herbalist — Original game soundtrack"
     }
   },
+  "2383920": {
+    "uploaded": 1794096000000,
+    "commit": "173b173d0cefb9fef84ba499e02e0e2ff8d2360d",
+    "change": {
+      "at": "2026-11-17T11:46:51Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 4,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "173b173d0cefb9fef84ba499e02e0e2ff8d2360d",
+      "title": "Full Quiet"
+    }
+  },
   "2788220": {
     "uploaded": 1794700800000,
     "commit": "2586d3c54fcefe4b594055a610394bbf4dcb286f",
@@ -87,6 +102,21 @@
       "title": "The Devil's Due"
     }
   },
+  "3712150": {
+    "uploaded": 1794009600000,
+    "commit": "301e1c27d7b98e8d985a3ea8ff03104c1aed3a5d",
+    "change": {
+      "at": "2026-11-17T11:46:55Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 4,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "301e1c27d7b98e8d985a3ea8ff03104c1aed3a5d",
+      "title": "TCG Card Collection: Tidy Up"
+    }
+  },
   "4045760": {
     "uploaded": 1794528000000,
     "commit": "3369bcd1c2cb19562d629575d0ec18cf18624a33",
@@ -130,6 +160,21 @@
       },
       "commit": "4c81e0bc63c26d35aa9d29981bed01194410c388",
       "title": "Aurora Protocol"
+    }
+  },
+  "4334780": {
+    "uploaded": 1794528000000,
+    "commit": "2b4181f5492fc522567775118ef273b6efd68e6d",
+    "change": {
+      "at": "2026-11-17T11:46:44Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 5,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "2b4181f5492fc522567775118ef273b6efd68e6d",
+      "title": "Hakuroku Game Collection"
     }
   },
   "4611950": {
@@ -177,6 +222,21 @@
       "title": "FolcDark Harvest Them Playtest"
     }
   },
+  "5052860": {
+    "uploaded": 1794182400000,
+    "commit": "505dec3373de6f68aef50668cf53e075007df2e2",
+    "change": {
+      "at": "2026-11-17T11:46:48Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 5,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "505dec3373de6f68aef50668cf53e075007df2e2",
+      "title": "Supercar Collection Together"
+    }
+  },
   "5094790": {
     "uploaded": 1794528000000,
     "commit": "f0f3c0d02612322024f7249e8ae986ccc9da752d",
@@ -190,6 +250,21 @@
       },
       "commit": "f0f3c0d02612322024f7249e8ae986ccc9da752d",
       "title": "QUTAS67 - Qubic Ultimate Tap Adventure Simulator 2067"
+    }
+  },
+  "5230710": {
+    "uploaded": 1794528000000,
+    "commit": "3375cc9b14466be7174e7778a1f23bf712c48f22",
+    "change": {
+      "at": "2026-11-17T11:46:40Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 4,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "3375cc9b14466be7174e7778a1f23bf712c48f22",
+      "title": "FULL THROTTLE RALLY"
     }
   },
   "5356100": {
