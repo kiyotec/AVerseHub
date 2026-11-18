@@ -102,6 +102,21 @@
       "title": "The Devil's Due"
     }
   },
+  "3711690": {
+    "uploaded": 1794873600000,
+    "commit": "1f5658a88cacce78d32011837b6b8286609695d1",
+    "change": {
+      "at": "2026-11-18T11:36:24Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 4,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "1f5658a88cacce78d32011837b6b8286609695d1",
+      "title": "Project Fleet"
+    }
+  },
   "3712150": {
     "uploaded": 1794009600000,
     "commit": "301e1c27d7b98e8d985a3ea8ff03104c1aed3a5d",
@@ -162,6 +177,21 @@
       "title": "Aurora Protocol"
     }
   },
+  "4301440": {
+    "uploaded": 1794787200000,
+    "commit": "3d5438c623b2baed4c6e50e72cd6ed04d9f96f51",
+    "change": {
+      "at": "2026-11-18T11:36:28Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 6,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "3d5438c623b2baed4c6e50e72cd6ed04d9f96f51",
+      "title": "Prostitute-Pimp 2"
+    }
+  },
   "4334780": {
     "uploaded": 1794528000000,
     "commit": "2b4181f5492fc522567775118ef273b6efd68e6d",
@@ -175,6 +205,21 @@
       },
       "commit": "2b4181f5492fc522567775118ef273b6efd68e6d",
       "title": "Hakuroku Game Collection"
+    }
+  },
+  "4348500": {
+    "uploaded": 1794787200000,
+    "commit": "c9594dfecfb2500383527f7a7e2c205eb7cea85c",
+    "change": {
+      "at": "2026-11-18T11:36:32Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 6,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "c9594dfecfb2500383527f7a7e2c205eb7cea85c",
+      "title": "Furniture Restoration Simulator: Garage Edition - Prologue"
     }
   },
   "4611950": {
@@ -220,6 +265,21 @@
       },
       "commit": "0b89665fd04c0c446ab8ea4eae8fab18f96e3129",
       "title": "FolcDark Harvest Them Playtest"
+    }
+  },
+  "5027890": {
+    "uploaded": 1794873600000,
+    "commit": "882d12df8600a1d3957f4bb51c98d662c42f99c0",
+    "change": {
+      "at": "2026-11-18T11:36:20Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 6,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "882d12df8600a1d3957f4bb51c98d662c42f99c0",
+      "title": "Majulah: Shape Your City – Prologue"
     }
   },
   "5052860": {
@@ -280,6 +340,21 @@
       },
       "commit": "bc74992d152382e1089d56166e8eb0d6edb3c342",
       "title": "FlyFuture Playtest"
+    }
+  },
+  "5397230": {
+    "uploaded": 1794787200000,
+    "commit": "bce017777d15778eb25bce1a467d0e4d2da70efa",
+    "change": {
+      "at": "2026-11-18T11:36:36Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 5,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "bce017777d15778eb25bce1a467d0e4d2da70efa",
+      "title": "Survive the Squallies: Prologue"
     }
   },
   "5416430": {
