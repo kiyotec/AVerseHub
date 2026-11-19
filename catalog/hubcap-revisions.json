@@ -267,6 +267,36 @@
       "title": "FolcDark Harvest Them Playtest"
     }
   },
+  "4959760": {
+    "uploaded": 1795046400000,
+    "commit": "2b071aafbf56919e8e95c24b22889053772c213c",
+    "change": {
+      "at": "2026-11-19T11:34:26Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 5,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "2b071aafbf56919e8e95c24b22889053772c213c",
+      "title": "The Heir: Steampunk Escape Room"
+    }
+  },
+  "5013290": {
+    "uploaded": 1794960000000,
+    "commit": "cf7c029890b1bab789c4d2086e467a38b41501d7",
+    "change": {
+      "at": "2026-11-19T11:34:39Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 5,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "cf7c029890b1bab789c4d2086e467a38b41501d7",
+      "title": "Idle King: Loot Together"
+    }
+  },
   "5027890": {
     "uploaded": 1794873600000,
     "commit": "882d12df8600a1d3957f4bb51c98d662c42f99c0",
@@ -327,6 +357,21 @@
       "title": "FULL THROTTLE RALLY"
     }
   },
+  "5285500": {
+    "uploaded": 1795046400000,
+    "commit": "b97895d47b062531b7ce654af82b39488663fbb1",
+    "change": {
+      "at": "2026-11-19T11:34:32Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 6,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "b97895d47b062531b7ce654af82b39488663fbb1",
+      "title": "Peril and Plunder"
+    }
+  },
   "5356100": {
     "uploaded": 1794787200000,
     "commit": "bc74992d152382e1089d56166e8eb0d6edb3c342",
@@ -342,6 +387,21 @@
       "title": "FlyFuture Playtest"
     }
   },
+  "5366340": {
+    "uploaded": 1795046400000,
+    "commit": "11d89f0af8ab85dc377de22db8afabb0a4b84668",
+    "change": {
+      "at": "2026-11-19T11:34:29Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 4,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "11d89f0af8ab85dc377de22db8afabb0a4b84668",
+      "title": "Dig into the orefields"
+    }
+  },
   "5397230": {
     "uploaded": 1794787200000,
     "commit": "bce017777d15778eb25bce1a467d0e4d2da70efa",
@@ -355,6 +415,21 @@
       },
       "commit": "bce017777d15778eb25bce1a467d0e4d2da70efa",
       "title": "Survive the Squallies: Prologue"
+    }
+  },
+  "5411780": {
+    "uploaded": 1794960000000,
+    "commit": "94c69a9dcea1de376a4a2038a39944671090cbd2",
+    "change": {
+      "at": "2026-11-19T11:34:36Z",
+      "action": "Thêm mới",
+      "fileCounts": {
+        "A": 4,
+        "M": 0,
+        "D": 0
+      },
+      "commit": "94c69a9dcea1de376a4a2038a39944671090cbd2",
+      "title": "PC Store Together Demo"
     }
   },
   "5416430": {
